@@ -3,50 +3,50 @@ name: Deploy MERN App
 on:
   push:
     branches:
-      - main   # deploy only on pushes to main
+    - master # deploy only on pushes to main
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      # === Backend (Node.js) ===
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
+    # === Backend (Node.js) ===
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
 
-      - name: Install backend dependencies
-        working-directory: backend
-        run: npm install
+    - name: Install backend dependencies
+      working-directory: backend
+      run: npm install
 
-      - name: Build frontend
-        working-directory: frontend
-        run: |
-          npm install
-          npm run build
+    - name: Build frontend
+      working-directory: frontend
+      run: |
+        npm install
+        npm run build
 
-      - name: Copy frontend build into backend
-        run: |
-          rm -rf backend/public
-          cp -r frontend/build backend/public
+    - name: Copy frontend build into backend
+      run: |
+        rm -rf backend/public
+        cp -r frontend/build backend/public
 
-      # === Deploy to EC2 ===
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_KEY }}
-          script: |
-            set -eux
-            cd ~/mern-ecommerce-app || git clone https://github.com/av3nd/mern-ecommerce-app.git
-            cd ~/mern-ecommerce-app
-            git pull origin main
-            cd backend
-            npm install --production
-            pm2 stop all || true
-            pm2 start server.js --name mern-app
+    # === Deploy to EC2 ===
+    - name: Deploy via SSH
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_KEY }}
+        script: |
+          set -eux
+          cd ~/mern-ecommerce-app || git clone https://github.com/av3nd/mern-ecommerce-app.git
+          cd ~/mern-ecommerce-app
+          git pull origin main
+          cd backend
+          npm install --production
+          pm2 stop all || true
+          pm2 start server.js --name mern-app
