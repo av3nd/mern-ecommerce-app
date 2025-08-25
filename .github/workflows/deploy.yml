@@ -32,7 +32,7 @@ jobs:
     - name: Copy frontend build into backend
       run: |
         rm -rf backend/public
-        cp -r frontend/build backend/public
+        cp -r frontend/dist backend/public
 
     # === Deploy to EC2 ===
     - name: Deploy via SSH
