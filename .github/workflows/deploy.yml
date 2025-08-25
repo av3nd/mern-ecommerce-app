@@ -45,7 +45,7 @@ jobs:
           set -eux
           cd ~/mern-ecommerce-app || git clone https://github.com/av3nd/mern-ecommerce-app.git
           cd ~/mern-ecommerce-app
-          git pull origin main
+          git pull origin master
           cd backend
           npm install --production
           pm2 stop all || true
